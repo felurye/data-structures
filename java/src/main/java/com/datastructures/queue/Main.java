@@ -4,33 +4,22 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Main {
+    public static void main(String[] args) {
+        Queue<Car> queue = new LinkedList<>();
 
-	public static void main(String args[]) {
+        queue.add(new Car("Ford"));
+        queue.add(new Car("Chevrolet"));
+        queue.add(new Car("Fiat"));
+        queue.offer(new Car("Peugeot")); // igual a add, mas retorna false em vez de lançar exceção
+        System.out.println(queue);
 
-		Queue<Carro> queueCarros = new LinkedList<Carro>();
+        System.out.println("element (não remove): " + queue.element());
+        System.out.println("peek (null se vazia): " + queue.peek());
 
-		queueCarros.add(new Carro("Ford"));
-		queueCarros.add(new Carro("Chevrolet"));
-		queueCarros.add(new Carro("Fiat"));
-		System.out.println(queueCarros.add(new Carro("Peugeot"))); // IllegalStateException
-		System.out.println(queueCarros);
+        System.out.println("remove: " + queue.remove());
+        System.out.println("poll (null se vazia): " + queue.poll());
+        System.out.println(queue);
 
-		System.out.println(queueCarros.element());// Pega o elemento da cabeça da fila sem remover
-		System.out.println(queueCarros);
-
-		System.out.println(queueCarros.offer(new Carro("Renault"))); // Retorna false se não conseguir
-		System.out.println(queueCarros);
-
-		System.out.println(queueCarros.peek());// Pega o elemento da cabeça da fila e se tiver vazia null
-		System.out.println(queueCarros);
-
-		System.out.println(queueCarros.remove()); // Remove
-		System.out.println(queueCarros);
-
-		System.out.println(queueCarros.poll()); // Remove ou retorna nulo para caso de fila vazia
-		System.out.println(queueCarros);
-
-		System.out.println(queueCarros.isEmpty());
-	}
-
+        System.out.println("isEmpty: " + queue.isEmpty());
+    }
 }

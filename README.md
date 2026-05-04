@@ -28,3 +28,7 @@ As implementações presentes neste repositório abordam conceitos como:
 - Grafos
 - Algoritmos de Ordenação
 - Algoritmos de Busca
+
+---
+
+⭐ Se este repositório for útil para você, considere deixar uma estrela.

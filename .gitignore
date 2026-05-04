@@ -1,35 +1,56 @@
-HELP.md
+# ─── Java / Maven ────────────────────────────────────────────────────────────
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-/bin/
+*.class
+*.jar
+*.war
+*.ear
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# ─── C / C++ ─────────────────────────────────────────────────────────────────
+*.o
+*.out
+*.exe
+*.obj
 
-### IntelliJ IDEA ###
-.idea
+# ─── IDEs ────────────────────────────────────────────────────────────────────
+
+# IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+# VS Code
+.vscode/
+
+# ─── OS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ─── Logs / temporários ──────────────────────────────────────────────────────
+*.log
+*.tmp
+*.swp
 build/
+bin/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-/c/output

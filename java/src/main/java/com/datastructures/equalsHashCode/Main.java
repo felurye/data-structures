@@ -4,19 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
+    public static void main(String[] args) {
+        List<Car> list = new ArrayList<>();
+        list.add(new Car("Ford"));
+        list.add(new Car("Chevrolet"));
+        list.add(new Car("Volkswagen"));
 
-	public static void main(String[] args) {
+        // contains usa equals() para comparar - retorna true porque equals está implementado
+        System.out.println("contains Ford: " + list.contains(new Car("Ford")));
 
-		List<Carro> listaCarros = new ArrayList<>();
+        // hashCode consistente: dois objetos iguais devem ter o mesmo hash
+        System.out.println("hashCode Ford (1): " + new Car("Ford").hashCode());
+        System.out.println("hashCode Ford (2): " + new Car("Ford").hashCode());
 
-		listaCarros.add(new Carro("Ford"));
-		listaCarros.add(new Carro("Chevrolet"));
-		listaCarros.add(new Carro("Volkswagen"));
-
-		System.out.println(listaCarros.contains(new Carro("Ford")));
-		System.out.println(new Carro("Ford").hashCode());
-		System.out.println(new Carro("Ford").hashCode());
-
-	}
-
+        // dois objetos com mesmo conteúdo são iguais por equals, mas não por ==
+        Car a = new Car("Ford");
+        Car b = new Car("Ford");
+        System.out.println("a == b: " + (a == b));
+        System.out.println("a.equals(b): " + a.equals(b));
+    }
 }

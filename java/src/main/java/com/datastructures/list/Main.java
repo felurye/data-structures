@@ -4,21 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
+    public static void main(String[] args) {
+        List<Car> cars = new ArrayList<>();
 
-	public static void main(String args[]) {
+        cars.add(new Car("Ford"));
+        cars.add(new Car("Chevrolet"));
+        cars.add(new Car("Fiat"));
+        cars.add(new Car("Peugeot"));
 
-		List<Carro> listCarros = new ArrayList<>();
+        System.out.println("contains Ford: " + cars.contains(new Car("Ford")));
+        System.out.println("get(2): " + cars.get(2));
+        System.out.println("indexOf Fiat: " + cars.indexOf(new Car("Fiat")));
 
-		listCarros.add(new Carro("Ford"));
-		listCarros.add(new Carro("Chevrolet"));
-		listCarros.add(new Carro("Fiat"));
-		listCarros.add(new Carro("Peugeot"));
-
-		System.out.println(listCarros.contains(new Carro("Ford")));
-		System.out.println(listCarros.get(2));
-		System.out.println(listCarros.indexOf(new Carro("Fiat")));
-
-		System.out.println(listCarros.remove(2));
-		System.out.println(listCarros);
-	}
+        System.out.println("remove(2): " + cars.remove(2));
+        System.out.println(cars);
+    }
 }
