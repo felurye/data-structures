@@ -1,86 +1,92 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #define TAMANHO 20
 
-struct pilha {
+typedef struct {
   int topo;
   char elementos[TAMANHO];
-};
+} Pilha;
 
-int tamanho_string(char *st);
-int pilha_vazia(struct pilha p);
-void empilhar(struct pilha *p, char simbolo);
-char desempilhar(struct pilha *p);
-char topo_da_pilha(struct pilha p);
+static int pilha_vazia(const Pilha *p);
+static int pilha_cheia(const Pilha *p);
+static void pilha_inicializar(Pilha *p);
+static int pilha_empilhar(Pilha *p, char simbolo);
+static int pilha_desempilhar(Pilha *p, char *simbolo);
 
-main() {
-  char expressao[TAMANHO], elem;
-  int cont, i, valida, tamanho;
+
+int main(void) {
+  char expressao[TAMANHO];
 
   printf("\nDigite a expressao matematica desejada: ");
-  scanf("%s", &expressao);
 
-  tamanho = tamanho_string(expressao);
-
-  printf("%d", tamanho);
-
-  struct pilha s;
-  s.topo = -1;
-  cont = 0;
-  valida = 1;
-
-  elem = expressao[cont];
-
-  while (cont < TAMANHO || elem == '\0') {
-    if (elem == '(') empilhar(&s, elem);
-    if (elem == ')') {
-      if (pilha_vazia(s))
-        valida = 0;
-      else
-        desempilhar(&s);
-    }
-    elem = expressao[cont];
-    cont++;
+  if (fgets(expressao, sizeof(expressao), stdin) == NULL) {
+    fprintf(stderr, "Erro ao ler a expressao.\n");
+    return EXIT_FAILURE;
   }
-  if (valida == 1 && pilha_vazia(s))
-    printf("Expressao Matematica Valida!!!");
-  else
-    printf("Expressao Matematica Invalida!!!");
-}
 
-int tamanho_string(char *st) {
-  int i;
-  for (i = 0; st[i] != '\0'; i++);
-  return (i);
-}
+  expressao[strcspn(expressao, "\n")] = '\0';
 
-int pilha_vazia(struct pilha p) {
-  if (p.topo == -1)
-    return (1);
-  else
-    return (0);
-}
-
-void empilhar(struct pilha *p, char simbolo) {
-  int top;
-  top = p->topo;
-  p->elementos[top + 1] = simbolo;
-  p->topo = top + 1;
-}
-
-char desempilhar(struct pilha *p) {
-  char aux;
-  int top;
-  if (pilha_vazia(*p)) {
-    printf("\nA pilha esta vazia, impossivel desempilhar");
-    return ('0');
+  if (validar_parenteses(expressao)) {
+    printf("Expressao matematica valida!\n");
   } else {
-    aux = p->elementos[p->topo];
-    top = p->topo;
-    p->topo = top - 1;
-    return (aux);
+    printf("Expressao matematica invalida!\n");
   }
+
+  return EXIT_SUCCESS;
 }
 
-char topo_da_pilha(struct pilha p) { return (p.elementos[p.topo]); }
+
+static int validar_parenteses(const char *expressao) {
+  Pilha pilha;
+  size_t i;
+
+  pilha_inicializar(&pilha);
+
+  for (i = 0; expressao[i] != '\0'; i++) {
+    char c = expressao[i];
+
+    if (c == '(') {
+      if (!pilha_empilhar(&pilha, c)) {
+        /* estouro de capacidade */
+        return 0;
+      }
+    } else if (c == ')') {
+      char topo;
+      if (!pilha_desempilhar(&pilha, &topo)) {
+        /* fecha sem abrir */
+        return 0;
+      }
+    }
+  }
+
+  return pilha_vazia(&pilha);
+}
+
+static void pilha_inicializar(Pilha *p) { p->topo = -1; }
+
+static int pilha_vazia(const Pilha *p) { return p->topo == -1; }
+
+static int pilha_cheia(const Pilha *p) { return p->topo == TAMANHO - 1; }
+
+static int pilha_empilhar(Pilha *p, char simbolo) {
+  if (pilha_cheia(p)) {
+    return 0;
+  }
+
+  p->topo++;
+  p->elementos[p->topo] = simbolo;
+  return 1;
+}
+
+static int pilha_desempilhar(Pilha *p, char *simbolo) {
+
+  if (pilha_vazia(p)) {
+    return 0;
+  }
+
+  *simbolo = p->elementos[p->topo];
+  p->topo--;
+  return 1;
+}
