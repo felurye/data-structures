@@ -3,7 +3,7 @@ package com.datastructures.binaryTree.model;
 import java.util.Objects;
 
 public class IntValue extends ComparableValue<IntValue> {
-    private Integer value;
+    private final Integer value;
 
     public IntValue(Integer value) {
         this.value = value;

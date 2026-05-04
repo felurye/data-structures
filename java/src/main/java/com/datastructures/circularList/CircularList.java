@@ -23,17 +23,20 @@ public class CircularList<T> {
         if (index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " out of bounds for size " + size);
         }
-        if (index == 0) {
-            tail = tail.getNext();
-            head.setNext(tail);
-        } else if (index == 1) {
-            tail.setNext(tail.getNext().getNext());
-        } else {
-            Node<T> aux = tail;
-            for (int i = 0; i < index - 1; i++) {
-                aux = aux.getNext();
-            }
-            aux.setNext(aux.getNext().getNext());
+        switch (index) {
+            case 0:
+                tail = tail.getNext();
+                head.setNext(tail);
+                break;
+            case 1:
+                tail.setNext(tail.getNext().getNext());
+                break;
+            default:
+                Node<T> aux = tail;
+                for (int i = 0; i < index - 1; i++) {
+                    aux = aux.getNext();
+                }   aux.setNext(aux.getNext().getNext());
+                break;
         }
         size--;
     }
