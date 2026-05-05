@@ -1,30 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 #include <windows.h>
 #define LIMPA_TELA system("cls")
+#define ESPERA Sleep(3000)
 #else
 #include <unistd.h>
 #define LIMPA_TELA system("/usr/bin/clear")
+#define ESPERA sleep(3)
 #endif
 
-#define ESPERA sleep(3)
-
-typedef struct Fila {
+typedef struct no_fila {
   int valor;
-  struct Fila *proximo;
-} Dados;
+  struct no_fila *proximo;
+} NoFila;
 
-void insere();
-void exclui();
-void mostra();
-void mostra_erro();
+static void inserir_na_fila(void);
+static void remover_da_fila(void);
+static void mostrar_fila(void);
+static void mostrar_erro(void);
 
-Dados *principal = NULL;
-Dados *final = NULL;
+static NoFila *inicio_fila = NULL;
+static NoFila *fim_fila = NULL;
 
-main() {
+int main(void) {
   char escolha;
 
   do {
@@ -39,19 +39,19 @@ main() {
     scanf("%c", &escolha);
     switch (escolha) {
       case '1':
-        insere();
+        inserir_na_fila();
         break;
       case '2':
-        if (principal != NULL) {
-          exclui();
+        if (inicio_fila != NULL) {
+          remover_da_fila();
         } else {
           printf("\nA Fila está vazia!\n");
           getchar();
         }
         break;
       case '3':
-        if (principal != NULL) {
-          mostra();
+        if (inicio_fila != NULL) {
+          mostrar_fila();
         } else {
           printf("\nA Fila está vazia!\n");
           getchar();
@@ -62,34 +62,36 @@ main() {
         printf("------>Terminal de Informação<------\n\n");
         ESPERA;
         exit(0);
-        break;
 
       default:
-        mostra_erro();
+        mostrar_erro();
         break;
     }
     getchar();
   } while (escolha > 0);
+
+  return 0;
 }
 
-void insere() {
-  int val;
+static void inserir_na_fila(void) {
+  int valor;
+  NoFila *novo_no;
+
   LIMPA_TELA;
   printf("\nInserção: \n");
   printf("--------------------------------------\n");
   printf("Insira o valor a ser inserido: ");
-  scanf("%d", &val);
-  Dados *atual = (Dados *)malloc(sizeof(Dados));
-  atual->valor = val;
-  atual->proximo = NULL;
+  scanf("%d", &valor);
 
-  if (principal == NULL) {
-    principal = final = atual;
-  }
+  novo_no = (NoFila *)malloc(sizeof(NoFila));
+  novo_no->valor = valor;
+  novo_no->proximo = NULL;
 
-  else {
-    final->proximo = atual;
-    final = atual;
+  if (inicio_fila == NULL) {
+    inicio_fila = fim_fila = novo_no;
+  } else {
+    fim_fila->proximo = novo_no;
+    fim_fila = novo_no;
   }
 
   printf("\nValor inserido!\n");
@@ -97,34 +99,39 @@ void insere() {
   getchar();
 }
 
-void exclui() {
-  Dados *auxiliar;
+static void remover_da_fila(void) {
+  NoFila *proximo_no;
+
   printf("\nExclusão: \n");
   printf("--------------------------------------\n");
-  auxiliar = principal->proximo;
-  free(principal);
-  principal = auxiliar;
+  proximo_no = inicio_fila->proximo;
+  free(inicio_fila);
+  inicio_fila = proximo_no;
+  if (inicio_fila == NULL) {
+    fim_fila = NULL;
+  }
   printf("\nValor excluido!\n");
   printf("--------------------------------------");
   getchar();
 }
 
-void mostra() {
+static void mostrar_fila(void) {
   int posicao = 0;
-  Dados *nova = principal;
+  NoFila *no_atual = inicio_fila;
+
   LIMPA_TELA;
   printf("\nMostrando valores: \n");
   printf("--------------------------------------\n");
 
-  for (; nova != NULL; nova = nova->proximo) {
+  for (; no_atual != NULL; no_atual = no_atual->proximo) {
     posicao++;
-    printf("Posição %d, contém o valor %d\n", posicao, nova->valor);
+    printf("Posição %d, contém o valor %d\n", posicao, no_atual->valor);
   }
   printf("--------------------------------------");
   getchar();
 }
 
-void mostra_erro() {
+static void mostrar_erro(void) {
   LIMPA_TELA;
   printf("\nErro de Digitação: \n");
   printf("--------------------------------------\n");

@@ -1,52 +1,69 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int particao(int vetor[8], int inicio, int fim) {
-  int pivo, up, down, aux;
+#define TAMANHO 8
 
-  pivo = vetor[inicio];
-  down = inicio;
-  up = fim;
-
-  while (down < up) {
-    while (vetor[down] <= pivo && down < fim) {
-      down = down + 1;
-    }
-    while (vetor[up] > pivo) {
-      up = up - 1;
-    }
-    if (down < up) {
-      aux = vetor[down];
-      vetor[down] = vetor[up];
-      vetor[up] = aux;
-    }
-  }
-  vetor[inicio] = vetor[up];
-  vetor[up] = pivo;
-  return (up);
+static void trocar(int *valor_a, int *valor_b) {
+  int valor_temporario = *valor_a;
+  *valor_a = *valor_b;
+  *valor_b = valor_temporario;
 }
 
-void quicksort(int vetor[8], int inicio, int fim) {
-  int pivo;
+static int particionar(int vetor[], int indice_inicial, int indice_final) {
+  int indice_meio = indice_inicial + (indice_final - indice_inicial) / 2;
+  int pivo = vetor[indice_meio];
+  int indice_esquerda = indice_inicial;
+  int indice_direita = indice_final;
 
-  if (inicio > fim) {
+  while (indice_esquerda <= indice_direita) {
+    while (vetor[indice_esquerda] < pivo) {
+      indice_esquerda++;
+    }
+
+    while (vetor[indice_direita] > pivo) {
+      indice_direita--;
+    }
+
+    if (indice_esquerda <= indice_direita) {
+      trocar(&vetor[indice_esquerda], &vetor[indice_direita]);
+      indice_esquerda++;
+      indice_direita--;
+    }
+  }
+
+  return indice_esquerda;
+}
+
+static void quicksort(int vetor[], int indice_inicial, int indice_final) {
+  int indice_particao;
+
+  if (indice_inicial >= indice_final) {
     return;
   }
 
-  pivo = particao(vetor, inicio, fim);
-
-  quicksort(vetor, inicio, pivo - 1);
-  quicksort(vetor, pivo + 1, fim);
+  indice_particao = particionar(vetor, indice_inicial, indice_final);
+  quicksort(vetor, indice_inicial, indice_particao - 1);
+  quicksort(vetor, indice_particao, indice_final);
 }
 
-int main() {
-  int vet[8], i, inicio, fim;
+int main(void) {
+  int vetor[TAMANHO];
+  int indice;
 
-  printf("Entre com 8 valores: \n");
-  for (i = 0; i < 8; i++) {
-    scanf("%d", &vet[i]);
+  printf("Entre com %d valores:\n", TAMANHO);
+  for (indice = 0; indice < TAMANHO; indice++) {
+    if (scanf("%d", &vetor[indice]) != 1) {
+      fprintf(stderr, "Entrada invalida.\n");
+      return EXIT_FAILURE;
+    }
   }
-  inicio = vet[0];
-  fim = vet[7];
 
-  quicksort(vet, inicio, fim);
+  quicksort(vetor, 0, TAMANHO - 1);
+
+  printf("Vetor ordenado: ");
+  for (indice = 0; indice < TAMANHO; indice++) {
+    printf("%d%s", vetor[indice], indice == TAMANHO - 1 ? "\n" : " | ");
+  }
+
+  return EXIT_SUCCESS;
 }

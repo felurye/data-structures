@@ -8,130 +8,116 @@
 typedef struct vertice {
   char nome[15];
   int custo;
-  int ant;
+  int antecessor;
 } Vertice;
 
 typedef struct aresta {
-  int adj;
   int peso;
 } Aresta;
 
 typedef struct grafo {
-  Vertice V[MAX_VERTICES];
-  Aresta E[MAX_VERTICES][MAX_VERTICES];
+  Vertice vertices[MAX_VERTICES];
+  Aresta arestas[MAX_VERTICES][MAX_VERTICES];
 } Grafo;
 
-Grafo relaxa(Grafo g, int i, int j) {
-  if (g.E[i][j].peso + g.V[i].custo < g.V[j].custo) {
-    g.V[j].custo = g.E[i][j].peso + g.V[i].custo;
-    g.V[j].ant = i;
+static Grafo relaxar_aresta(Grafo grafo, int origem, int destino) {
+  if (grafo.arestas[origem][destino].peso + grafo.vertices[origem].custo <
+      grafo.vertices[destino].custo) {
+    grafo.vertices[destino].custo =
+        grafo.arestas[origem][destino].peso + grafo.vertices[origem].custo;
+    grafo.vertices[destino].antecessor = origem;
   }
-  return g;
+  return grafo;
 }
 
-Grafo bellman_ford(Grafo g, int s) {
-  int i, j;
-  int ant;
-  int max = 0;
-  i = s;
+static Grafo executar_bellman_ford(Grafo grafo, int origem) {
+  int vertice_atual = origem;
+  int destino;
+  int iteracoes = 0;
 
-  while (max < MAX_VERTICES * 4) {
-    for (j = 0; j < MAX_VERTICES; j++) {
-      if (g.E[i][j].peso < INF && i != j) {
-        g = relaxa(g, i, j);
+  while (iteracoes < MAX_VERTICES * 4) {
+    for (destino = 0; destino < MAX_VERTICES; destino++) {
+      if (grafo.arestas[vertice_atual][destino].peso < INF &&
+          vertice_atual != destino) {
+        grafo = relaxar_aresta(grafo, vertice_atual, destino);
       }
     }
-    if (i == MAX_VERTICES - 1) {
-      i = 0;
+
+    if (vertice_atual == MAX_VERTICES - 1) {
+      vertice_atual = 0;
     } else {
-      i++;
+      vertice_atual++;
     }
-    max++;
+
+    iteracoes++;
   }
-  return g;
+
+  return grafo;
 }
 
-Grafo inicializa(Grafo g) {
-  int i, j;
+static Grafo inicializar_grafo(Grafo grafo) {
+  int origem;
+  int destino;
 
-  // Nomes dos Vertices
-  strcpy(g.V[0].nome, "Roteador");
-  strcpy(g.V[1].nome, "Switch 1");
-  strcpy(g.V[2].nome, "Switch 2");
-  strcpy(g.V[3].nome, "Switch 3");
-  strcpy(g.V[4].nome, "Estacao 1");
-  strcpy(g.V[5].nome, "Estacao 2");
-  strcpy(g.V[6].nome, "Estacao 3");
-  strcpy(g.V[7].nome, "Estacao 4");
+  strcpy(grafo.vertices[0].nome, "Roteador");
+  strcpy(grafo.vertices[1].nome, "Switch 1");
+  strcpy(grafo.vertices[2].nome, "Switch 2");
+  strcpy(grafo.vertices[3].nome, "Switch 3");
+  strcpy(grafo.vertices[4].nome, "Estacao 1");
+  strcpy(grafo.vertices[5].nome, "Estacao 2");
+  strcpy(grafo.vertices[6].nome, "Estacao 3");
+  strcpy(grafo.vertices[7].nome, "Estacao 4");
 
-  // Inicializa a diagonal com 0 e todos os Pesos com INFINITO
-  for (i = 0; i < MAX_VERTICES; i++) {
-    for (j = 0; j < MAX_VERTICES; j++) {
-      if (i == j) {
-        g.E[i][j].peso = 0;
-      } else {
-        g.E[i][j].peso = INF;
-      }
+  for (origem = 0; origem < MAX_VERTICES; origem++) {
+    for (destino = 0; destino < MAX_VERTICES; destino++) {
+      grafo.arestas[origem][destino].peso = origem == destino ? 0 : INF;
     }
   }
 
-  g.E[0][1].peso = 8;
-  g.E[1][0].peso = 8;
+  grafo.arestas[0][1].peso = 8;
+  grafo.arestas[1][0].peso = 8;
+  grafo.arestas[0][2].peso = 9;
+  grafo.arestas[2][0].peso = 9;
+  grafo.arestas[1][2].peso = 3;
+  grafo.arestas[2][1].peso = 3;
+  grafo.arestas[1][3].peso = 2;
+  grafo.arestas[3][1].peso = 2;
+  grafo.arestas[1][4].peso = 7;
+  grafo.arestas[4][1].peso = 7;
+  grafo.arestas[1][5].peso = 3;
+  grafo.arestas[5][1].peso = 3;
+  grafo.arestas[2][3].peso = 2;
+  grafo.arestas[3][2].peso = 2;
+  grafo.arestas[2][6].peso = 1;
+  grafo.arestas[6][2].peso = 1;
+  grafo.arestas[2][7].peso = 3;
+  grafo.arestas[7][2].peso = 3;
+  grafo.arestas[3][6].peso = 4;
+  grafo.arestas[6][3].peso = 4;
+  grafo.arestas[4][5].peso = 2;
+  grafo.arestas[5][4].peso = 2;
+  grafo.arestas[6][7].peso = 2;
+  grafo.arestas[7][6].peso = 2;
 
-  g.E[0][2].peso = 9;
-  g.E[2][0].peso = 9;
-
-  g.E[1][2].peso = 3;
-  g.E[2][1].peso = 3;
-
-  g.E[1][3].peso = 2;
-  g.E[3][1].peso = 2;
-
-  g.E[1][4].peso = 7;
-  g.E[4][1].peso = 7;
-
-  g.E[1][5].peso = 3;
-  g.E[5][1].peso = 3;
-
-  g.E[2][3].peso = 2;
-  g.E[3][2].peso = 2;
-
-  g.E[2][6].peso = 1;
-  g.E[6][2].peso = 1;
-
-  g.E[2][7].peso = 3;
-  g.E[7][2].peso = 3;
-
-  g.E[3][6].peso = 4;
-  g.E[6][3].peso = 4;
-
-  g.E[4][5].peso = 2;
-  g.E[5][4].peso = 2;
-
-  g.E[6][7].peso = 2;
-  g.E[7][6].peso = 2;
-
-  return g;
+  return grafo;
 }
 
-Grafo ini(Grafo g, int s) {
-  int i;
+static Grafo inicializar_custos(Grafo grafo, int origem) {
+  int indice_vertice;
 
-  for (i = 0; i < MAX_VERTICES; i++) {
-    if (i == s) {
-      g.V[i].custo = 0;
-    } else {
-      g.V[i].custo = INF;
-    }
-
-    g.V[i].ant = s;
+  for (indice_vertice = 0; indice_vertice < MAX_VERTICES; indice_vertice++) {
+    grafo.vertices[indice_vertice].custo =
+        indice_vertice == origem ? 0 : INF;
+    grafo.vertices[indice_vertice].antecessor = origem;
   }
 
-  return g;
+  return grafo;
 }
 
-void printCaminho(Grafo g) {
-  int i, est = 4, atual;
+static void imprimir_caminhos(Grafo grafo) {
+  int indice_vertice;
+  int vertice_atual;
+
   printf(
       "---------------------------------------------------------------------"
       "\n");
@@ -142,24 +128,23 @@ void printCaminho(Grafo g) {
       "---------------------------------------------------------------------"
       "\n");
 
-  for (i = 4; i < 8; i++) {
-    printf("%s <- ", g.V[i].nome);
-    atual = g.V[i].ant;
-    while (atual != 0) {
-      printf("%s <- ", g.V[atual].nome);
-      atual = g.V[atual].ant;
+  for (indice_vertice = 4; indice_vertice < 8; indice_vertice++) {
+    printf("%s <- ", grafo.vertices[indice_vertice].nome);
+    vertice_atual = grafo.vertices[indice_vertice].antecessor;
+    while (vertice_atual != 0) {
+      printf("%s <- ", grafo.vertices[vertice_atual].nome);
+      vertice_atual = grafo.vertices[vertice_atual].antecessor;
     }
-    printf(" %s. ", g.V[atual].nome);
-    printf("Custo total: %d \n", g.V[i].custo);
+    printf(" %s. ", grafo.vertices[vertice_atual].nome);
+    printf("Custo total: %d \n", grafo.vertices[indice_vertice].custo);
   }
 }
 
-main() {
-  int s, i, cont;
-  Grafo g;
-  g = inicializa(g);
+int main(void) {
+  int origem;
+  int opcao;
+  Grafo grafo = inicializar_grafo(grafo);
 
-inicio:
   printf(
       "---------------------------------------------------------------------"
       "\n");
@@ -194,18 +179,18 @@ inicio:
   printf(
       "---------------------------------------------------------------------"
       "\n");
-  printf("Escolha uma op��o.\n");
+  printf("Escolha uma opcao.\n");
   printf("1. Caso teste.\n");
-  printf("1. Escolha de onde quer sair.\n");
+  printf("2. Escolha de onde quer sair.\n");
   printf("Valor: ");
 
-  scanf("%d", &cont);
+  scanf("%d", &opcao);
   system("cls");
 
-  if (cont == 1) {
-    g = ini(g, 0);
-    g = bellman_ford(g, 0);
-    printCaminho(g);
+  if (opcao == 1) {
+    grafo = inicializar_custos(grafo, 0);
+    grafo = executar_bellman_ford(grafo, 0);
+    imprimir_caminhos(grafo);
   } else {
     printf("Entre com o valor correspondente de onde deseja sair.\n");
     printf("0. Roteador.\n");
@@ -218,20 +203,13 @@ inicio:
     printf("7. Estacao 4.\n");
     printf("Valor: ");
 
-    scanf("%d", &s);
-
+    scanf("%d", &origem);
     system("cls");
 
-    g = ini(g, s);
-
-    g = bellman_ford(g, s);
-
-    printCaminho(g);
+    grafo = inicializar_custos(grafo, origem);
+    grafo = executar_bellman_ford(grafo, origem);
+    imprimir_caminhos(grafo);
   }
 
-  /*for(i=0; i < MAX_VERTICES; i++){
-      printf("%s custo : %d \n", g.V[i].nome, g.V[i].custo);
-  }*/
-
-  // printf("\n");
+  return 0;
 }

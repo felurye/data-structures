@@ -1,46 +1,62 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-void intercalar(int v[], int aux[], int ini1, int ini2, int fim2) {
-  int in1 = ini1, in2 = ini2, fim1 = in2 - 1, au = 0, i;
+#define TAMANHO 10
 
-  while (in1 <= fim1 && in2 <= fim2) {
-    if (v[in1] < v[in2]) {
-      aux[au++] = v[in1++];
+static void intercalar(int vetor[], int vetor_auxiliar[], int inicio_primeira,
+                       int inicio_segunda, int fim_segunda) {
+  int indice_primeira = inicio_primeira;
+  int indice_segunda = inicio_segunda;
+  int fim_primeira = inicio_segunda - 1;
+  int quantidade_mesclada = 0;
+  int indice;
+
+  while (indice_primeira <= fim_primeira && indice_segunda <= fim_segunda) {
+    if (vetor[indice_primeira] <= vetor[indice_segunda]) {
+      vetor_auxiliar[quantidade_mesclada++] = vetor[indice_primeira++];
     } else {
-      aux[au++] = v[in2++];
+      vetor_auxiliar[quantidade_mesclada++] = vetor[indice_segunda++];
     }
   }
-  while (in1 <= fim1) {
-    aux[au++] = v[in1++];
-  }
-  while (in2 <= fim2) {
-    aux[au++] = v[in2++];
+
+  while (indice_primeira <= fim_primeira) {
+    vetor_auxiliar[quantidade_mesclada++] = vetor[indice_primeira++];
   }
 
-  for (i = 0; i < au; i++) {
-    v[i + ini1] = aux[i];
+  while (indice_segunda <= fim_segunda) {
+    vetor_auxiliar[quantidade_mesclada++] = vetor[indice_segunda++];
   }
-}
 
-void mergeSort(int v[], int aux[], int esq, int dir) {
-  int meio;
-  if (esq < dir) {
-    meio = (esq + dir) / 2;
-    mergeSort(v, aux, esq, meio);
-    mergeSort(v, aux, meio + 1, dir);
-    intercalar(v, aux, esq, meio + 1, dir);
+  for (indice = 0; indice < quantidade_mesclada; indice++) {
+    vetor[indice + inicio_primeira] = vetor_auxiliar[indice];
   }
 }
 
-int main() {
-  int v[10] = {45, 23, 10, 25, 89, 75, 46, 32, 20, 1}, aux[10], i;
+static void merge_sort(int vetor[], int vetor_auxiliar[], int indice_esquerda,
+                       int indice_direita) {
+  int indice_meio;
 
-  mergeSort(v, aux, 0, 9);
+  if (indice_esquerda < indice_direita) {
+    indice_meio = indice_esquerda + (indice_direita - indice_esquerda) / 2;
+    merge_sort(vetor, vetor_auxiliar, indice_esquerda, indice_meio);
+    merge_sort(vetor, vetor_auxiliar, indice_meio + 1, indice_direita);
+    intercalar(vetor, vetor_auxiliar, indice_esquerda, indice_meio + 1,
+               indice_direita);
+  }
+}
+
+int main(void) {
+  int vetor[TAMANHO] = {45, 23, 10, 25, 89, 75, 46, 32, 20, 1};
+  int vetor_auxiliar[TAMANHO];
+  int indice;
+
+  merge_sort(vetor, vetor_auxiliar, 0, TAMANHO - 1);
 
   printf("| ");
-  for (i = 0; i < 10; i++) {
-    printf("%d | ", v[i]);
+  for (indice = 0; indice < TAMANHO; indice++) {
+    printf("%d | ", vetor[indice]);
   }
+  printf("\n");
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -12,6 +12,26 @@ struct noh {
   struct noh *pai;
 };
 
+struct noh *pai(struct noh *n);
+struct noh *irmao(struct noh *n);
+struct noh *avo(struct noh *n);
+struct noh *tio(struct noh *n);
+struct noh *insercao(struct noh *raiz, struct noh *n);
+void insercao_noh(struct noh *raiz, struct noh *n);
+void casos_insercao(struct noh *n);
+void insercao_caso1(struct noh *n);
+void insercao_caso2(struct noh *n);
+void insercao_caso3(struct noh *n);
+void insercao_caso4(struct noh *n);
+void insercao_caso4_2(struct noh *n);
+void rotacao_esq(struct noh *n);
+void rotacao_dir(struct noh *n);
+struct noh *busca(struct noh *raiz, int chave);
+struct noh *antecessor(struct noh *n);
+void imprimir_ERD(struct noh *raiz);
+void imprimir_RED(struct noh *raiz);
+static void menu(void);
+
 struct noh *pai(struct noh *n) { return n->pai; }
 
 struct noh *irmao(struct noh *n) {
@@ -104,7 +124,7 @@ void insercao_caso1(struct noh *n) {
   }
 }
 
-void insercao_caso2(struct noh *n) { return; }
+void insercao_caso2(struct noh *n) { (void)n; }
 
 void insercao_caso3(struct noh *n) {
   struct noh *p = pai(n);
@@ -211,7 +231,7 @@ struct noh *antecessor(struct noh *n) {
   if (n->dir == NULL) {
     return n;
   }
-  antecessor(n->dir);
+  return antecessor(n->dir);
 }
 
 struct noh *remocao_caso1(struct noh *n, struct noh *filho) {
@@ -259,13 +279,12 @@ void remocao(struct noh *raiz, int chave) {
     struct noh *i = irmao(elem);
     if (i->cor == 'V') {
       i->cor = 'P';
-      raiz->pai = 'V';
-      raiz->pai->dir == NULL;
+      raiz->cor = 'V';
+      raiz->pai->dir = NULL;
       raiz = NULL;
     } else {
       if (i->dir != NULL && i->esq != NULL) {
-        i->pai->dir == NULL;
-        i->pai->dir->pai = NULL;
+        i->pai->dir = NULL;
         rotacao_dir(i->pai);
         i->cor = 'V';
         i->dir->cor = 'P';
@@ -273,8 +292,7 @@ void remocao(struct noh *raiz, int chave) {
         imprimir_RED(i->pai->pai);
       } else {
         if (i->esq != NULL) {
-          i->pai->dir == NULL;
-          i->pai->dir->pai = NULL;
+          i->pai->dir = NULL;
 
           rotacao_dir(i->pai);
           imprimir_RED(i->pai->pai);
@@ -349,7 +367,7 @@ void imprimir_RED(struct noh *raiz) {
   imprimir_RED(raiz->dir);
 }
 
-menu() {
+static void menu(void) {
   system("cls");
   printf("**************************************\n");
   printf("|              Red black             |\n");
@@ -363,13 +381,13 @@ menu() {
   printf("Opcao: ");
 }
 
-main() {
+int main(void) {
   struct noh *raiz;
   raiz = NULL;
 
   struct noh *elem;
   struct noh *no[MAX];
-  int i, max, chave, opcao;
+  int i = 0, chave, opcao;
 
   do {
     menu();
@@ -391,6 +409,9 @@ main() {
           no[i] = (struct noh *)malloc(sizeof(struct noh));
           no[i]->chave = chave;
           raiz = insercao(raiz, no[i]);
+          if (i < MAX - 1) {
+            i++;
+          }
         }
         break;
 
@@ -424,4 +445,6 @@ main() {
         break;
     }
   } while (opcao != 0);
+
+  return 0;
 }

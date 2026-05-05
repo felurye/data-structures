@@ -1,35 +1,49 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int main() {
-  int vet[8], i, j, aux;
+#define TAMANHO 8
 
-  printf("Entre com 8 numeros: \n");
+static void bubble_sort(int vetor[], int tamanho) {
+  int fim;
 
-  for (i = 0; i < 8; i++) {
-    scanf("%d", &vet[i]);
-  }
+  for (fim = tamanho - 1; fim > 0; fim--) {
+    int i;
+    int trocou = 0;
 
-  printf("\n\n Troca: \n\n");
-
-  for (j = 0; j < 8; j++) {
-    for (i = 0; i < 7; i++) {
-      if (vet[i] > vet[i + 1]) {
-        printf("Vet[%d]= %d vet[%d]= %d - ", i, vet[i], i + 1, vet[i + 1]);
-
-        aux = vet[i];
-        vet[i] = vet[i + 1];
-        vet[i + 1] = aux;
-
-        printf("Vet[%d]= %d vet[%d]= %d \n\n", i, vet[i], i + 1, vet[i + 1]);
+    for (i = 0; i < fim; i++) {
+      if (vetor[i] > vetor[i + 1]) {
+        int aux = vetor[i];
+        vetor[i] = vetor[i + 1];
+        vetor[i + 1] = aux;
+        trocou = 1;
       }
     }
-    printf("\n");
+
+    if (!trocou) {
+      break;
+    }
+  }
+}
+
+int main(void) {
+  int vet[TAMANHO];
+  int i;
+
+  printf("Entre com %d numeros:\n", TAMANHO);
+
+  for (i = 0; i < TAMANHO; i++) {
+    if (scanf("%d", &vet[i]) != 1) {
+      fprintf(stderr, "Entrada invalida.\n");
+      return EXIT_FAILURE;
+    }
   }
 
-  printf("\n\n Pos ordenacao: ");
+  bubble_sort(vet, TAMANHO);
 
-  for (i = 0; i < 8; i++) {
-    printf(" %d - ", vet[i]);
+  printf("Vetor ordenado: ");
+  for (i = 0; i < TAMANHO; i++) {
+    printf("%d%s", vet[i], i == TAMANHO - 1 ? "\n" : " | ");
   }
-  return 0;
+
+  return EXIT_SUCCESS;
 }

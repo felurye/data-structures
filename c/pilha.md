@@ -34,11 +34,11 @@ typedef struct {
 
 As funções principais da pilha são:
 
-- `pilha_inicializar(Pilha *p)`: inicializa a pilha, definindo `topo = -1`.
-- `pilha_vazia(const Pilha *p)`: retorna verdadeiro se `topo == -1`.
-- `pilha_cheia(const Pilha *p)`: retorna verdadeiro se `topo == TAMANHO - 1`.
-- `pilha_empilhar(Pilha *p, char simbolo)`: adiciona um novo caractere no topo (se houver espaço).
-- `pilha_desempilhar(Pilha *p, char *simbolo)`: remove o caractere do topo (se a pilha não estiver vazia).
+- `inicializar_pilha(Pilha *pilha)`: inicializa a pilha, definindo `topo = -1`.
+- `pilha_esta_vazia(const Pilha *pilha)`: retorna verdadeiro se `topo == -1`.
+- `pilha_esta_cheia(const Pilha *pilha)`: retorna verdadeiro se `topo == TAMANHO - 1`.
+- `empilhar(Pilha *pilha, char simbolo)`: adiciona um novo caractere no topo (se houver espaço).
+- `desempilhar(Pilha *pilha, char *simbolo)`: remove o caractere do topo (se a pilha não estiver vazia).
 
 Todas essas operações trabalham diretamente sobre a estrutura `Pilha` para manter o controle de quais elementos estão armazenados.
 
@@ -78,19 +78,19 @@ static int validar_parenteses(const char *expressao) {
   Pilha pilha;
   size_t i;
 
-  pilha_inicializar(&pilha);
+  inicializar_pilha(&pilha);
 
   for (i = 0; expressao[i] != '\0'; i++) {
     char c = expressao[i];
 
     if (c == '(') {
-      if (!pilha_empilhar(&pilha, c)) {
+      if (!empilhar(&pilha, c)) {
         /* estouro de capacidade */
         return 0;
       }
     } else if (c == ')') {
       char topo;
-      if (!pilha_desempilhar(&pilha, &topo)) {
+      if (!desempilhar(&pilha, &topo)) {
         /* fecha sem abrir */
         return 0;
       }
@@ -98,7 +98,7 @@ static int validar_parenteses(const char *expressao) {
   }
 
   /* expressão válida se não houver sobras na pilha */
-  return pilha_vazia(&pilha);
+  return pilha_esta_vazia(&pilha);
 }
 ```
 
