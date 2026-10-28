@@ -29,6 +29,8 @@ As implementações presentes neste repositório abordam conceitos como:
 - Algoritmos de Ordenação
 - Algoritmos de Busca
 
+Consulte também as [notas de estudo consolidadas](./notes.md), com teoria complementar às implementações.
+
 ---
 
 ⭐ Se este repositório for útil para você, considere deixar uma estrela.
